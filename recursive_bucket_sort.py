@@ -28,7 +28,10 @@ def recursive_bucket_sort(array):
 
     # Places values of the array into buckets
     for val in array:
-        index = int((num_of_buckets-1) * ((val - minimum) / difference))
+        if difference != 0:
+            index = int((num_of_buckets-1) * ((val - minimum) / difference))
+        else:
+            index = 0
         buckets[index].append(val)
     
     # If any bucket contains more than one element and is unsorted,
