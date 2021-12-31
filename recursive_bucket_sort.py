@@ -8,7 +8,7 @@ def is_sorted(array):
     return True
 
 # Sorts a given array using buckets recursively
-def recursive_bucket_sort(array):
+def new_recursive_bucket_sort(array):
     # Returns array if it contains fewer than two elements
     if len(array) < 2:
         return array
@@ -30,12 +30,12 @@ def recursive_bucket_sort(array):
     for val in array:
         index = int((num_of_buckets-1) * ((val - minimum) / difference))
         buckets[index].append(val)
-
-        # If the bucket contains more than one element and is unsorted,
-        # run the bucket sort on the bucket
-        if len(buckets[index]) > 1 and not is_sorted(buckets[index]):
-            buckets[index] = recursive_bucket_sort(buckets[index])
+    
+    # If any bucket contains more than one element and is unsorted,
+    # run the bucket sort on the bucket
+    for i in range(0, len(buckets)):
+        if len(buckets[i]) > 1 and not is_sorted(buckets[i]):
+            buckets[i] = recursive_bucket_sort(buckets[i])
 
     # Returns the flattened buckets
     return [j for sub in buckets for j in sub]
-
