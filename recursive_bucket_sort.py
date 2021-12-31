@@ -8,7 +8,7 @@ def is_sorted(array):
     return True
 
 # Sorts a given array using buckets recursively
-def new_recursive_bucket_sort(array):
+def recursive_bucket_sort(array):
     # Returns array if it contains fewer than two elements
     if len(array) < 2:
         return array
