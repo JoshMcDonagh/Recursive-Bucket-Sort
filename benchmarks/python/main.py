@@ -122,6 +122,7 @@ for sort in sorts:
                     ]
                 )
             )
+            csv.append('\n')
 
 output = {
     "results": "\n".join([s for s in csv]),
