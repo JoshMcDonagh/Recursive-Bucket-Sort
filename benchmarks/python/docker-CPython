@@ -1,0 +1,3 @@
+FROM python:latest
+
+CMD [ "python3", "/app/main.py" ]
