@@ -7,7 +7,7 @@ This is a web API programmed in F#.
 # Tech Stack
 
 * ASP Core
-* EF Core
+* EF Core - (A relational database is the *wrong* choice here, but I wanted to use something I know to get it done fast)
 * Giraffe
 
 # Developing
