@@ -1,0 +1,132 @@
+- name: Install Deps
+  hosts: server
+  become: true
+  tags:
+    - deps
+  tasks:
+    - name: Yum Docker
+      yum:
+        name: docker
+        state: present
+    - name: Install Node
+      shell: curl --silent --location https://rpm.nodesource.com/setup_14.x | bash -
+    - name: Yum Node
+      yum:
+        name: nodejs
+        state: present
+    - name: Install Dotnet
+      shell: rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
+    - name: Yum Dotnet
+      yum:
+        name: dotnet-sdk-6.0
+        state: present
+
+- name: Setup frontend (locally)
+  hosts: local
+  tags:
+    - frontend
+  tasks:
+    - name: Generate dist
+      shell: |
+        cd ../frontend
+        npm i
+        npm run build
+        cd dist
+        zip -r -qq ../dist.zip .
+
+- name: Setup frontend
+  hosts: server
+  become: true
+  tags:
+    - frontend
+  tasks:
+    - name: Create dir
+      file:
+        path: /frontend
+        state: directory
+    - name: Copy files
+      copy:
+        src: ../frontend/dist.zip
+        dest: /frontend
+    - name: Unzip
+      shell: |
+        cd /frontend
+        unzip -o dist.zip
+        npm i --global http-server
+
+- name: Setup backend (locally)
+  hosts: local
+  tags:
+    - backend
+  tasks:
+    - name: Generate dist
+      shell: |
+        cd ../backend
+        dotnet restore
+        dotnet publish -o dist
+        cd dist
+        zip -r -qq ../dist.zip .
+
+- name: Setup backend
+  hosts: server
+  become: true
+  tags:
+    - backend
+  tasks:
+    - name: Create dir
+      file:
+        path: /backend
+        state: directory
+    - name: Copy files
+      copy:
+        src: ../backend/dist.zip
+        dest: /backend
+    - name: Unzip files
+      shell: |
+        cd /backend
+        unzip -o -qq dist.zip
+
+- name: Create services
+  hosts: server
+  become: true
+  vars_files:
+    - params.yml
+  tags:
+    - services
+  tasks:
+    - name: Create Service
+      template:
+        src: ./templates/backend.service
+        dest: /etc/systemd/system/backend.service
+    - name: Enable service
+      systemd:
+        service: backend
+        state: restarted
+        enabled: true
+        daemon-reload: true
+
+
+- name: Start Caddy
+  hosts: server
+  become: true
+  tags:
+    - caddy
+  tasks:
+    - name: Install caddy
+      shell: |
+        curl -L "https://caddyserver.com/api/download?os=linux&arch=amd64&idempotency=37796529345495" -o /usr/bin/caddy
+        chmod +x /usr/bin/caddy
+    - name: Copy caddyfile
+      copy:
+        src: ./Caddyfile
+        dest: /etc/Caddyfile
+    - name: Create Caddy service
+      copy:
+        src: ./templates/caddy.service
+        dest: /etc/systemd/system/caddy.service
+    - name: Run Caddy Service
+      systemd:
+        service: caddy
+        state: reloaded
+        enabled: true
+        daemon-reload: true

@@ -1,0 +1,11 @@
+algorithms.chatha.dev
+
+route /api/* {
+    uri strip_prefix /api
+    reverse_proxy localhost:5000
+}
+
+root * /frontend
+file_server {
+    precompressed zstd br gzip
+}
