@@ -1,4 +1,7 @@
 results.json
 cpython.json
 pypy.json
+results.csv
+cpython.csv
+pypy.csv
 __pycache__

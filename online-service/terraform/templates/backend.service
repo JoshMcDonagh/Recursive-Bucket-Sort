@@ -1,0 +1,13 @@
+[Unit]
+Description=The backend server
+After=network.target
+
+[Service]
+WorkingDirectory=/backend
+Environment=DB_CONN_STRING=User\sId={{ db_user }};Server={{ db_host }};Port={{ db_port }};Database={{ db_db }};Password={{ db_pass }};
+Environment=DOTNET_CLI_HOME=/home/ec2-user
+ExecStart=/backend/backend
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

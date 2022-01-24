@@ -1,8 +1,10 @@
 from abc import abstractmethod
+from datetime import datetime
 import os
+import platform
 from typing import List
 import json
-import platform
+
 import timsort
 import quicksort
 import recursive_bucket_sort
@@ -114,26 +116,44 @@ for sort in sorts:
                 ",".join(
                     str(value)
                     for value in [
+                        datetime.now(),
+                        fully_random_time,
+                        "python",
                         type(sort).__name__,
                         size,
-                        recurrence,
-                        fully_random_time,
-                        partially_random_time,
+                        platform.system(),
+                        platform.architecture()[0] + platform.architecture()[1],
+                        platform.processor() or platform.machine(),
+                        platform.python_version(),
+                        "1",
+                        "FullyRandom",
+                        "int",
                     ]
                 )
             )
 
-output = {
-    "results": "\n".join([s for s in csv]),
-    "cpu": platform.processor(),
-    "platform": platform.platform(),
-    "arch": platform.architecture(),
-    "python": platform.python_implementation(),
-    "python_version": platform.python_version(),
-    "recurrences": recurrences,
-}
+            csv.append(
+                ",".join(
+                    str(value)
+                    for value in [
+                        datetime.now(),
+                        partially_random_time,
+                        "python",
+                        type(sort).__name__,
+                        size,
+                        platform.system(),
+                        platform.architecture()[0] + platform.architecture()[1],
+                        platform.processor() or platform.machine(),
+                        platform.python_version(),
+                        "1",
+                        "PartiallyRandom",
+                        "int",
+                    ]
+                )
+            )
+
 
 with open(
-    "results.json" if "OUTPUT" not in os.environ else os.environ["OUTPUT"], mode="w"
+    "results.csv" if "OUTPUT" not in os.environ else os.environ["OUTPUT"], mode="w"
 ) as f:
-    f.write(json.dumps(output))
+    f.write("\n".join([s for s in csv]))
