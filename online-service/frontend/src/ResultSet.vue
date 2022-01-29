@@ -1,6 +1,7 @@
 <template>
     <h2>Recording {{$route.params.id}}</h2>
     <br/>
+    <button style="margin-bottom: 1rem;" @click="exportToCsv">Export to CSV</button>
     <section id="recordings">
         <table>
             <thead>
@@ -51,6 +52,32 @@ fetch("/api/results", {
         ResultSetId: route.params.id
     })
 }).then(r => r.json()).then(j => recordings.value = j)
+
+function exportToCsv() {
+    let result = "SortingAlgorithm,Duration(seconds),ArraySize(elements),Language,ArrayDistribution,ArrayElementType,OperatingSystem,Architecture,CPU,SortingAlgorithmImplementationVersion\n"
+
+    recordings.value?.forEach(r => {
+        result += r.sortingAlgorithm + ","
+        result += r.duration + ","
+        result += r.arraySize + ","
+        result += r.language + ","
+        result += r.metadata.arrayDistribution + ","
+        result += r.metadata.arrayElementType + ","
+        result += r.metadata.operatingSystem + ","
+        result += r.metadata.architecture + ","
+        result += r.metadata.cpu + ","
+        result += r.metadata.sortingAlgorithmImplementationVersion + ","
+        result += "\n"
+    });
+
+    const blob = new Blob([result], {type: "text/csv"});
+    const elem = window.document.createElement("a");
+    elem.href = window.URL.createObjectURL(blob);
+    elem.download = "results.csv";
+    document.body.appendChild(elem);
+    elem.click();
+    document.body.removeChild(elem);
+}
 </script>
 
 <style lang="scss" scoped>
