@@ -1,6 +1,6 @@
 <template>
     <header>
-        <h1>Joshua Marland's Sorting Algorithm Comparison</h1>
+        <h1>Joshua McDonagh's Sorting Algorithm Comparison</h1>
         <div id="links">
             <router-link to="/">Results</router-link>
             <router-link to="/upload">Upload</router-link>
